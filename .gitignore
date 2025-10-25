@@ -1,0 +1,8 @@
+# Hugging Face trainer outputs
+/results/
+/logs/
+/model/ 
+
+# Python caches
+__pycache__/
+*.pyc
