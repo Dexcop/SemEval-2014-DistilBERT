@@ -11,21 +11,21 @@ def predict(text):
     inputs = tokenizer(text, return_tensors="pt", truncation=True)
     outputs = model(**inputs)
 
-    # Multi-label classification → use sigmoid
+    # Multi-label classification
     probs = torch.sigmoid(outputs.logits).flatten()
-
-    # Threshold (you can tune this)
     preds = (probs >= 0.5).int().tolist()
 
-    # Format result
-    result = {cat: pred for cat, pred in zip(CATEGORIES, preds)}
-    return result
+    # Only keep categories where prediction == 1
+    active = [cat for cat, p in zip(CATEGORIES, preds) if p == 1]
+
+    # If nothing predicted, return "None"
+    return ", ".join(active) if active else "No aspect detected"
 
 demo = gr.Interface(
     fn=predict,
     inputs=gr.Textbox(label="Review"),
-    outputs=gr.JSON(label="Predicted Aspect Categories"),
-    title="Restaurant Aspect Category Classifier"
+    outputs=gr.Textbox(label="Detected Aspects"),
+    title="Aspect Category Detector"
 )
 
 demo.launch()
